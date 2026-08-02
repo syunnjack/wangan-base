@@ -3,13 +3,13 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Garage = { name: string; rank: string; car: string; story: number; course: string };
-type Post = { id: number; category: string; title: string; body: string; author: string; tags: string[]; likes: number; time: string };
+type Post = { id: number; category: string; title: string; body: string; author: string; tags: string[]; likes: number; replies: number; time: string };
 
 const defaultGarage: Garage = { name: "NIGHT★RUNNER", rank: "C8", car: "SKYLINE GT-R (BNR32)", story: 32, course: "C1" };
 const initialPosts: Post[] = [
-  { id: 1, category: "質問・相談", title: "大阪のセッティングは何馬力がおすすめ？", body: "ストーリーを進めながら大阪を練習中です。壁に当たりにくい設定を知りたいです。", author: "C8 / R32", tags: ["大阪", "初心者"], likes: 24, time: "12分前" },
-  { id: 2, category: "攻略情報", title: "C1内回り、赤コーナーで失速しない進入", body: "ひとつ手前から外へ寄せ、短いアクセルオフで姿勢を作ると出口が安定します。", author: "B3 / RX-8", tags: ["C1", "ライン取り"], likes: 61, time: "38分前" },
-  { id: 3, category: "対戦募集", title: "今週末、初心者同士で走りませんか？", body: "勝敗より練習重視。フルチューン前でも歓迎です。", author: "C5 / EVO IX", tags: ["対戦募集", "初心者歓迎"], likes: 18, time: "1時間前" },
+  { id: 1, category: "質問・相談", title: "大阪のセッティングは何馬力がおすすめ？", body: "ストーリーを進めながら大阪を練習中です。壁に当たりにくい設定を知りたいです。", author: "C8 / R32", tags: ["大阪", "初心者"], likes: 24, replies: 0, time: "12分前" },
+  { id: 2, category: "攻略情報", title: "C1内回り、赤コーナーで失速しない進入", body: "ひとつ手前から外へ寄せ、短いアクセルオフで姿勢を作ると出口が安定します。", author: "B3 / RX-8", tags: ["C1", "ライン取り"], likes: 61, replies: 8, time: "38分前" },
+  { id: 3, category: "対戦募集", title: "今週末、初心者同士で走りませんか？", body: "勝敗より練習重視。フルチューン前でも歓迎です。", author: "C5 / EVO IX", tags: ["対戦募集", "初心者歓迎"], likes: 18, replies: 4, time: "1時間前" },
 ];
 
 const courses = [
@@ -26,6 +26,19 @@ const cars = [
   ["04", "NISSAN", "SKYLINE GT-R", "BNR34", "接触耐性", "★★★★☆"],
 ];
 
+const pollCars = [
+  { name: "SKYLINE GT-R (BNR32)", votes: 184 },
+  { name: "RX-8 (SE3P)", votes: 156 },
+  { name: "LANCER Evolution IX", votes: 121 },
+  { name: "SKYLINE GT-R (BNR34)", votes: 98 },
+];
+
+const contributors = [
+  { rank: 1, name: "APEX_32", score: 1280, badge: "攻略王" },
+  { rank: 2, name: "ROTARY8", score: 1045, badge: "ベスト回答" },
+  { rank: 3, name: "NIGHT EVO", score: 920, badge: "募集マスター" },
+];
+
 function targetFor(story: number) {
   if (story < 20) return { next: 20, hp: 600, label: "基本チューン完成" };
   if (story < 50) return { next: 50, hp: 800, label: "800馬力へ" };
@@ -40,13 +53,17 @@ export default function WanganApp() {
   const [postFilter, setPostFilter] = useState("すべて");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState<"garage" | "post" | null>(null);
+  const [postSeed, setPostSeed] = useState("");
+  const [vote, setVote] = useState("");
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const savedGarage = localStorage.getItem("wangan-base.garage");
       const savedPosts = localStorage.getItem("wangan-base.posts");
+      const savedVote = localStorage.getItem("wangan-base.vote");
       if (savedGarage) setGarage(JSON.parse(savedGarage));
-      if (savedPosts) setPosts(JSON.parse(savedPosts));
+      if (savedPosts) setPosts((JSON.parse(savedPosts) as Post[]).map(post => ({ ...post, replies: post.replies ?? 0 })));
+      if (savedVote) setVote(savedVote);
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -54,7 +71,7 @@ export default function WanganApp() {
   const target = targetFor(garage.story);
   const progress = Math.min(100, Math.round((garage.story / target.next) * 100));
   const filteredPosts = useMemo(() => posts.filter((post) => {
-    const categoryMatch = postFilter === "すべて" || post.category === postFilter;
+    const categoryMatch = postFilter === "すべて" || (postFilter === "未回答" ? post.category === "質問・相談" && post.replies === 0 : post.category === postFilter);
     const text = `${post.title} ${post.body} ${post.tags.join(" ")}`.toLowerCase();
     return categoryMatch && text.includes(query.toLowerCase());
   }), [posts, postFilter, query]);
@@ -74,8 +91,14 @@ export default function WanganApp() {
   const addPost = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const next: Post = { id: Date.now(), category: String(data.get("category")), title: String(data.get("title")), body: String(data.get("body")), author: `${garage.rank} / ${garage.name}`, tags: [String(data.get("tag") || "初心者")], likes: 0, time: "たった今" };
-    const updated = [next, ...posts]; setPosts(updated); localStorage.setItem("wangan-base.posts", JSON.stringify(updated)); setModal(null); jump("コミュニティ", "community");
+    const next: Post = { id: Date.now(), category: String(data.get("category")), title: String(data.get("title")), body: String(data.get("body")), author: `${garage.rank} / ${garage.name}`, tags: [String(data.get("tag") || "初心者")], likes: 0, replies: 0, time: "たった今" };
+    const updated = [next, ...posts]; setPosts(updated); localStorage.setItem("wangan-base.posts", JSON.stringify(updated)); setPostSeed(""); setModal(null); jump("コミュニティ", "community");
+  };
+
+  const castVote = (car: string) => {
+    if (vote) return;
+    setVote(car);
+    localStorage.setItem("wangan-base.vote", car);
   };
 
   return (
@@ -122,8 +145,26 @@ export default function WanganApp() {
 
       <section className="section" id="community">
         <div className="section-title community-title"><div><p className="kicker">COMMUNITY PIT</p><h2>走りの答えは、<br/><em>ここに集まる。</em></h2></div><button className="primary" onClick={() => setModal("post")}>＋ 新しい投稿</button></div>
-        <div className="community-tools"><div className="filters">{["すべて","攻略情報","質問・相談","対戦募集"].map(filter => <button className={postFilter === filter ? "active" : ""} onClick={() => setPostFilter(filter)} key={filter}>{filter}</button>)}</div><label className="search">⌕<input value={query} onChange={e => setQuery(e.target.value)} placeholder="投稿を検索" /></label></div>
-        <div className="post-grid">{filteredPosts.map(post => <article key={post.id}><div className="post-meta"><span>{post.category}</span><time>{post.time}</time></div><h3>{post.title}</h3><p>{post.body}</p><div className="tags">{post.tags.map(tag => <span key={tag}>#{tag}</span>)}</div><footer><b>{post.author}</b><button onClick={() => { const updated=posts.map(item=>item.id===post.id?{...item,likes:item.likes+1}:item); setPosts(updated); localStorage.setItem("wangan-base.posts", JSON.stringify(updated)); }}>♡ {post.likes}</button></footer></article>)}</div>
+        <div className="ugc-boost">
+          <article className="daily-topic"><div><span className="live-badge">TODAY&apos;S TOPIC</span><p>今日のお題</p><h3>あなたが最初に「壁接触ゼロ」を達成したコースは？</h3></div><button onClick={() => { setPostSeed("初めて壁接触ゼロを達成したコース"); setModal("post"); }}>お題に答える →</button></article>
+          <article className="contribution-card"><p className="kicker">YOUR CONTRIBUTION</p><strong>{posts.filter(post => post.author.includes(garage.name)).length}</strong><span>POSTS</span><div><b>次のバッジまであと1投稿</b><i><em /></i></div></article>
+          <article className="answer-call"><p className="kicker">PIT SUPPORT</p><strong>{posts.filter(post => post.category === "質問・相談" && post.replies === 0).length}</strong><span>未回答の質問</span><button onClick={() => setPostFilter("未回答")}>最初の回答者になる →</button></article>
+        </div>
+        <div className="engagement-grid">
+          <section className="poll-panel">
+            <div className="panel-heading"><div><p className="kicker">WEEKLY POLL</p><h3>初心者にすすめたい1台は？</h3></div><span>{pollCars.reduce((sum, car) => sum + car.votes, 0) + (vote ? 1 : 0)} VOTES</span></div>
+            <div className="poll-options">{pollCars.map(car => { const votes = car.votes + (vote === car.name ? 1 : 0); const total = pollCars.reduce((sum, item) => sum + item.votes, 0) + (vote ? 1 : 0); return <button className={vote === car.name ? "selected" : ""} disabled={Boolean(vote)} onClick={() => castVote(car.name)} key={car.name}><span>{car.name}</span><i><em style={{ width: `${Math.round(votes / total * 100)}%` }} /></i><b>{Math.round(votes / total * 100)}%</b></button> })}</div>
+            <p className="vote-note">{vote ? `「${vote}」に投票しました。` : "タップするだけで投票できます。結果は投票後も表示されます。"}</p>
+          </section>
+          <section className="ranking-panel">
+            <div className="panel-heading"><div><p className="kicker">PIT RANKING</p><h3>今週の貢献ドライバー</h3></div><span>WEEKLY</span></div>
+            <ol>{contributors.map(driver => <li key={driver.rank}><strong>0{driver.rank}</strong><div><b>{driver.name}</b><span>{driver.badge}</span></div><em>{driver.score.toLocaleString()} PT</em></li>)}</ol>
+            <p>投稿・回答・共感された回数からポイントを集計</p>
+          </section>
+        </div>
+        <div className="community-tools"><div className="filters">{["すべて","攻略情報","質問・相談","未回答","対戦募集"].map(filter => <button className={postFilter === filter ? "active" : ""} onClick={() => setPostFilter(filter)} key={filter}>{filter}</button>)}</div><label className="search">⌕<input value={query} onChange={e => setQuery(e.target.value)} placeholder="投稿を検索" /></label></div>
+        <div className="post-grid">{filteredPosts.map(post => <article key={post.id}><div className="post-meta"><span>{post.category}</span><time>{post.time}</time></div><h3>{post.title}</h3><p>{post.body}</p><div className="tags">{post.tags.map(tag => <span key={tag}>#{tag}</span>)}</div><footer><b>{post.author}</b><div className="post-actions"><span>↳ {post.replies}</span><button aria-label={`${post.title}に共感する`} onClick={() => { const updated=posts.map(item=>item.id===post.id?{...item,likes:item.likes+1}:item); setPosts(updated); localStorage.setItem("wangan-base.posts", JSON.stringify(updated)); }}>♡ {post.likes}</button></div></footer></article>)}</div>
+        {filteredPosts.length === 0 && <div className="empty-posts"><p>この条件の投稿はまだありません。</p><button onClick={() => setModal("post")}>最初の投稿をする →</button></div>}
       </section>
 
       <section className="cta"><p className="kicker">YOUR NEXT RUN STARTS HERE</p><h2>次の1プレイを、<br/><em>今日より速く。</em></h2><p>現在の進捗を記録すると、次にやるべきことが見えてくる。</p><button className="primary" onClick={() => setModal("garage")}>マイガレージを更新 <span>→</span></button></section>
@@ -132,7 +173,7 @@ export default function WanganApp() {
 
       <nav className="mobile-nav">{[["⌂","ホーム","top"],["⌁","攻略","guides"],["＋","投稿","post"],["♢","ガレージ","garage"]].map(([icon,label,id]) => <button onClick={() => id === "post" || id === "garage" ? setModal(id) : jump(label,id)} key={label}><b>{icon}</b>{label}</button>)}</nav>
 
-      {modal && <div className="modal-backdrop" role="presentation" onMouseDown={() => setModal(null)}><section className="modal" role="dialog" aria-modal="true" aria-label={modal === "garage" ? "マイガレージを編集" : "新しい投稿"} onMouseDown={e => e.stopPropagation()}><button className="modal-close" onClick={() => setModal(null)}>×</button>{modal === "garage" ? <><p className="kicker">MY GARAGE</p><h2>進捗を更新する</h2><form onSubmit={saveGarage}><label>プレイヤーネーム<input name="name" defaultValue={garage.name} required /></label><div className="form-row"><label>ランク<input name="rank" defaultValue={garage.rank} required /></label><label>ストーリー話数<input name="story" type="number" min="0" max="100" defaultValue={garage.story} required /></label></div><label>使用車種<input name="car" defaultValue={garage.car} required /></label><label>練習中のコース<select name="course" defaultValue={garage.course}>{courses.map(c=><option key={c.name}>{c.name}</option>)}</select></label><button className="primary">保存する →</button></form></> : <><p className="kicker">NEW POST</p><h2>コミュニティへ投稿</h2><form onSubmit={addPost}><label>カテゴリー<select name="category"><option>攻略情報</option><option>質問・相談</option><option>対戦募集</option><option>店舗情報</option></select></label><label>タイトル<input name="title" required placeholder="聞きたいこと・共有したいこと" /></label><label>本文<textarea name="body" required rows={4} placeholder="プレイヤーに伝わるように詳しく書いてください" /></label><label>タグ<input name="tag" placeholder="例：C1、初心者" /></label><button className="primary">投稿する →</button></form></>}</section></div>}
+      {modal && <div className="modal-backdrop" role="presentation" onMouseDown={() => setModal(null)}><section className="modal" role="dialog" aria-modal="true" aria-label={modal === "garage" ? "マイガレージを編集" : "新しい投稿"} onMouseDown={e => e.stopPropagation()}><button className="modal-close" onClick={() => setModal(null)}>×</button>{modal === "garage" ? <><p className="kicker">MY GARAGE</p><h2>進捗を更新する</h2><form onSubmit={saveGarage}><label>プレイヤーネーム<input name="name" defaultValue={garage.name} required /></label><div className="form-row"><label>ランク<input name="rank" defaultValue={garage.rank} required /></label><label>ストーリー話数<input name="story" type="number" min="0" max="100" defaultValue={garage.story} required /></label></div><label>使用車種<input name="car" defaultValue={garage.car} required /></label><label>練習中のコース<select name="course" defaultValue={garage.course}>{courses.map(c=><option key={c.name}>{c.name}</option>)}</select></label><button className="primary">保存する →</button></form></> : <><p className="kicker">NEW POST</p><h2>コミュニティへ投稿</h2>{postSeed && <p className="post-prompt">今日のお題：{postSeed}</p>}<form onSubmit={addPost}><label>カテゴリー<select name="category"><option>攻略情報</option><option>質問・相談</option><option>対戦募集</option><option>店舗情報</option></select></label><label>タイトル<input name="title" defaultValue={postSeed} required placeholder="聞きたいこと・共有したいこと" /></label><label>本文<textarea name="body" required rows={4} placeholder="プレイヤーに伝わるように詳しく書いてください" /></label><label>タグ<input name="tag" defaultValue={postSeed ? "今日のお題" : ""} placeholder="例：C1、初心者" /></label><button className="primary">投稿する →</button></form></>}</section></div>}
     </main>
   );
 }
