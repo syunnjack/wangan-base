@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./ugc.css";
 
 export const metadata: Metadata = {
   title: { default: "WANGAN BASE", template: "%s｜WANGAN BASE" },
