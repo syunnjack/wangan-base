@@ -39,6 +39,12 @@ const contributors = [
   { rank: 3, name: "NIGHT EVO", score: 920, badge: "募集マスター" },
 ];
 
+const revenueLinks = {
+  support: process.env.NEXT_PUBLIC_SUPPORT_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
+  gear: process.env.NEXT_PUBLIC_GEAR_AFFILIATE_URL || "https://www.amazon.co.jp/s?k=%E3%83%89%E3%83%A9%E3%82%A4%E3%83%93%E3%83%B3%E3%82%B0%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96+%E3%82%B2%E3%83%BC%E3%83%A0",
+  partner: process.env.NEXT_PUBLIC_PARTNER_URL || "mailto:partner@midnightpit.jp?subject=MIDNIGHT%20PIT%E6%8E%B2%E8%BC%89%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87",
+};
+
 function targetFor(story: number) {
   if (story < 20) return { next: 20, hp: 600, label: "基本チューン完成" };
   if (story < 50) return { next: 50, hp: 800, label: "800馬力へ" };
@@ -167,9 +173,31 @@ export default function WanganApp() {
         {filteredPosts.length === 0 && <div className="empty-posts"><p>この条件の投稿はまだありません。</p><button onClick={() => setModal("post")}>最初の投稿をする →</button></div>}
       </section>
 
+      <section className="section revenue-section" id="support">
+        <div className="section-title"><div><p className="kicker">SUPPORT THE PIT</p><h2>この場所を、<br/><em>一緒に育てる。</em></h2></div><p>攻略情報はこれまで通り無料。<br/>応援とパートナー掲載が運営を支えます。</p></div>
+        <div className="revenue-grid">
+          <article className="support-plan">
+            <div className="revenue-label">FOR DRIVERS</div><p className="kicker">PIT CREW MEMBERSHIP</p><h3>ピットクルー</h3><div className="price"><strong>¥390</strong><span>/ 月</span></div>
+            <ul><li>プロフィールに限定バッジ</li><li>広告を控えめに表示</li><li>新機能への先行投票</li><li>月次の活動レポート</li></ul>
+            <a className="revenue-cta" href={revenueLinks.support}>サポーターになる →</a><small>いつでも解除できます</small>
+          </article>
+          <article className="gear-guide">
+            <div className="revenue-label pr">AFFILIATE</div><p className="kicker">DRIVER&apos;S GEAR</p><h3>プレイを快適にするギア</h3><p>手の滑りを抑えるグローブ、カードケース、イヤホンなど、プレイヤー目線で選んだアイテムを紹介。</p>
+            <div className="gear-items"><span>01　ドライビンググローブ</span><span>02　バナパスポートケース</span><span>03　有線イヤホン</span></div>
+            <a className="revenue-cta secondary-cta" href={revenueLinks.gear} target="_blank" rel="noreferrer sponsored">おすすめギアを見る ↗</a><small>購入により運営者へ紹介料が入る場合があります</small>
+          </article>
+          <article className="partner-plan">
+            <div className="revenue-label sponsor">FOR PARTNERS</div><p className="kicker">SPONSORED PIT</p><h3>店舗・イベント掲載</h3><p>大会、交流会、ゲームセンターの情報を、地域とプレイヤー層に合わせて届けます。</p>
+            <dl><div><dt>掲載枠</dt><dd>トップ / 地域 / 募集</dd></div><div><dt>レポート</dt><dd>表示・クリック数</dd></div><div><dt>表記</dt><dd>PRを明示</dd></div></dl>
+            <a className="revenue-cta secondary-cta" href={revenueLinks.partner}>掲載を相談する →</a><small>内容を確認してから掲載します</small>
+          </article>
+        </div>
+        <p className="revenue-policy">MIDNIGHT PITは、広告や提携の有無によって攻略評価を変更しません。広告・アフィリエイト・スポンサー投稿には「PR」を明記します。</p>
+      </section>
+
       <section className="cta"><p className="kicker">YOUR NEXT RUN STARTS HERE</p><h2>次の1プレイを、<br/><em>今日より速く。</em></h2><p>現在の進捗を記録すると、次にやるべきことが見えてくる。</p><button className="primary" onClick={() => setModal("garage")}>マイガレージを更新 <span>→</span></button></section>
 
-      <footer className="footer"><div className="brand"><span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b></span></div><p>ファンによる非公式コミュニティサイトです。ゲームメーカーおよび権利者各社とは関係ありません。<br/>ゲーム名、車名、商標等は各権利者に帰属します。</p><div><a href="#guides">攻略</a><a href="#community">投稿ガイドライン</a><a href="#top">サイトについて</a></div></footer>
+      <footer className="footer"><div className="brand"><span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b></span></div><p>ファンによる非公式コミュニティサイトです。ゲームメーカーおよび権利者各社とは関係ありません。<br/>ゲーム名、車名、商標等は各権利者に帰属します。</p><div><a href="#guides">攻略</a><a href="#community">投稿ガイドライン</a><a href="#support">運営を支援</a><a href="#top">サイトについて</a></div></footer>
 
       <nav className="mobile-nav">{[["⌂","ホーム","top"],["⌁","攻略","guides"],["＋","投稿","post"],["♢","ガレージ","garage"]].map(([icon,label,id]) => <button onClick={() => id === "post" || id === "garage" ? setModal(id) : jump(label,id)} key={label}><b>{icon}</b>{label}</button>)}</nav>
 
