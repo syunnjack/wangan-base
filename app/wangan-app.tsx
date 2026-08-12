@@ -39,9 +39,39 @@ const contributors = [
   { rank: 3, name: "NIGHT EVO", score: 920, badge: "募集マスター" },
 ];
 
+
+type ArcadeArea = { region: string; prefecture: string; area: string };
+
+const arcadeAreas: ArcadeArea[] = [
+  ["北海道・東北","北海道","JP-01"],["北海道・東北","青森県","JP-02"],["北海道・東北","岩手県","JP-03"],["北海道・東北","宮城県","JP-04"],["北海道・東北","秋田県","JP-05"],["北海道・東北","山形県","JP-06"],["北海道・東北","福島県","JP-07"],
+  ["関東","茨城県","JP-08"],["関東","栃木県","JP-09"],["関東","群馬県","JP-10"],["関東","埼玉県","JP-11"],["関東","千葉県","JP-12"],["関東","東京都（23区）","JP-13&sw=1"],["関東","東京都（23区外）","JP-13&sw=0"],["関東","神奈川県","JP-14"],
+  ["信越・北陸","新潟県","JP-15"],["信越・北陸","富山県","JP-16"],["信越・北陸","石川県","JP-17"],["信越・北陸","福井県","JP-18"],["信越・北陸","山梨県","JP-19"],["信越・北陸","長野県","JP-20"],
+  ["東海","岐阜県","JP-21"],["東海","静岡県","JP-22"],["東海","愛知県","JP-23"],["東海","三重県","JP-24"],
+  ["関西","滋賀県","JP-25"],["関西","京都府","JP-26"],["関西","大阪府","JP-27"],["関西","兵庫県","JP-28"],["関西","奈良県","JP-29"],["関西","和歌山県","JP-30"],
+  ["中国・四国","鳥取県","JP-31"],["中国・四国","島根県","JP-32"],["中国・四国","岡山県","JP-33"],["中国・四国","広島県","JP-34"],["中国・四国","山口県","JP-35"],["中国・四国","徳島県","JP-36"],["中国・四国","香川県","JP-37"],["中国・四国","愛媛県","JP-38"],["中国・四国","高知県","JP-39"],
+  ["九州・沖縄","福岡県","JP-40"],["九州・沖縄","佐賀県","JP-41"],["九州・沖縄","長崎県","JP-42"],["九州・沖縄","熊本県","JP-43"],["九州・沖縄","大分県","JP-44"],["九州・沖縄","宮崎県","JP-45"],["九州・沖縄","鹿児島県","JP-46"],["九州・沖縄","沖縄県","JP-47"],
+].map(([region, prefecture, area]) => ({ region, prefecture, area }));
+
+const arcadeRegions = [...new Set(arcadeAreas.map(({ region }) => region))];
+const officialLocationUrl = (area: string) =>
+  `https://wanganmaxi-official.com/wanganmaxi6rrplus/jp/locations/list?area=${area}`;
+
+const boothUrl = process.env.NEXT_PUBLIC_BOOTH_URL || "https://wan-gan-base.booth.pm/";
+
+const boothItems = [
+  {
+    name: "運営支援パック 01",
+    fullName: "WANGAN BASE 運営支援パック 01",
+    price: 500,
+    summary: "深夜の高速道路をモチーフにしたWANGAN BASEオリジナルの壁紙と、活動レポートを収録したダウンロード限定パック。",
+    contents: ["PC用壁紙（16:9 PNG）", "スマートフォン用壁紙（9:16 PNG）", "活動レポート 2026（PDF）", "README（利用案内）"],
+    url: process.env.NEXT_PUBLIC_BOOTH_ITEM_01_URL || boothUrl,
+  },
+];
+
 const revenueLinks = {
+  booth: boothUrl,
   support: process.env.NEXT_PUBLIC_SUPPORT_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
-  gear: process.env.NEXT_PUBLIC_GEAR_AFFILIATE_URL || "https://www.amazon.co.jp/s?k=%E3%83%89%E3%83%A9%E3%82%A4%E3%83%93%E3%83%B3%E3%82%B0%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96+%E3%82%B2%E3%83%BC%E3%83%A0",
   partner: process.env.NEXT_PUBLIC_PARTNER_URL || "mailto:partner@midnightpit.jp?subject=MIDNIGHT%20PIT%E6%8E%B2%E8%BC%89%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87",
 };
 
@@ -61,6 +91,7 @@ export default function WanganApp() {
   const [modal, setModal] = useState<"garage" | "post" | null>(null);
   const [postSeed, setPostSeed] = useState("");
   const [vote, setVote] = useState("");
+  const [arcadeQuery, setArcadeQuery] = useState("");
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -76,6 +107,7 @@ export default function WanganApp() {
 
   const target = targetFor(garage.story);
   const progress = Math.min(100, Math.round((garage.story / target.next) * 100));
+  const filteredArcadeAreas = useMemo(() => arcadeAreas.filter(({ region, prefecture }) => `${region} ${prefecture}`.toLowerCase().includes(arcadeQuery.toLowerCase())), [arcadeQuery]);
   const filteredPosts = useMemo(() => posts.filter((post) => {
     const categoryMatch = postFilter === "すべて" || (postFilter === "未回答" ? post.category === "質問・相談" && post.replies === 0 : post.category === postFilter);
     const text = `${post.title} ${post.body} ${post.tags.join(" ")}`.toLowerCase();
@@ -114,7 +146,7 @@ export default function WanganApp() {
           <span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b><small>PLAYER COMMUNITY</small></span>
         </button>
         <nav aria-label="メインメニュー">
-          {[["ホーム","top"],["攻略","guides"],["車種","cars"],["コミュニティ","community"]].map(([label,id]) => <button className={active === label ? "active" : ""} onClick={() => jump(label,id)} key={label}>{label}</button>)}
+          {[["ホーム","top"],["攻略","guides"],["車種","cars"],["店舗","arcades"],["コミュニティ","community"]].map(([label,id]) => <button className={active === label ? "active" : ""} onClick={() => jump(label,id)} key={label}>{label}</button>)}
         </nav>
         <button className="garage-button" onClick={() => setModal("garage")}><span>◉</span> マイガレージ</button>
       </header>
@@ -149,6 +181,28 @@ export default function WanganApp() {
         <div className="car-list">{cars.map((car) => <article key={car[0]}><span className="car-no">{car[0]}</span><div className="car-icon">◇</div><div className="car-name"><small>{car[1]}</small><h3>{car[2]}</h3><span>{car[3]}</span></div><div className="car-stat"><small>特徴</small><b>{car[4]}</b></div><div className="car-rate"><small>初心者おすすめ</small><b>{car[5]}</b></div><button aria-label={`${car[2]}を見る`}>↗</button></article>)}</div>
       </section>
 
+
+      <section className="section arcade-section" id="arcades">
+        <div className="section-title">
+          <div><p className="kicker">ARCADE DIRECTORY</p><h2>全国の設置店を、<br/><em>探す。</em></h2></div>
+          <p>湾岸ミッドナイト マキシマムチューン 6RR PLUS<br/>公式設置店舗情報（2026年8月12日確認）</p>
+        </div>
+        <div className="arcade-notice"><span>LIVE SOURCE</span><p>全国47都道府県・48エリアを網羅。店舗名・住所・設置台数は、各エリアの公式最新一覧で確認できます。</p></div>
+        <label className="arcade-search">⌕<input value={arcadeQuery} onChange={event => setArcadeQuery(event.target.value)} placeholder="都道府県・地方名で検索" /></label>
+        <div className="arcade-regions">
+          {arcadeRegions.map(region => {
+            const areas = filteredArcadeAreas.filter(area => area.region === region);
+            if (!areas.length) return null;
+            return <article className="arcade-region" key={region}><header><span>{String(arcadeRegions.indexOf(region) + 1).padStart(2, "0")}</span><h3>{region}</h3></header><div>{areas.map(area => <a href={officialLocationUrl(area.area)} target="_blank" rel="noreferrer" key={area.prefecture}><b>{area.prefecture}</b><span>公式設置店を見る ↗</span></a>)}</div></article>;
+          })}
+        </div>
+        <aside className="arcade-partner">
+          <div><span className="pr-chip">PR掲載枠</span><p className="kicker">FOR ARCADE OPERATORS</p><h3>大会・交流会を、近くのプレイヤーへ。</h3><p>店舗のイベントや初心者歓迎デーを、地域別ディレクトリとコミュニティで告知できます。PR表記、掲載期間、レポート内容を事前に明示します。</p></div>
+          <div className="partner-offer"><small>店舗・イベント掲載</small><strong>掲載プランを相談</strong><span>地域掲載 / 募集投稿 / 表示レポート</span><a href={revenueLinks.partner}>掲載について問い合わせる →</a></div>
+        </aside>
+        <p className="arcade-disclaimer">設置情報・台数はリアルタイム反映ではありません。未掲載・撤去済みの場合もあるため、来店前に各店舗へ直接ご確認ください。情報提供元：バンダイナムコエクスペリエンス公式サイト。公式一覧の掲載順位は変更せず、有料掲載は「PR」と明示します。</p>
+      </section>
+
       <section className="section" id="community">
         <div className="section-title community-title"><div><p className="kicker">COMMUNITY PIT</p><h2>走りの答えは、<br/><em>ここに集まる。</em></h2></div><button className="primary" onClick={() => setModal("post")}>＋ 新しい投稿</button></div>
         <div className="ugc-boost">
@@ -175,6 +229,12 @@ export default function WanganApp() {
 
       <section className="section revenue-section" id="support">
         <div className="section-title"><div><p className="kicker">SUPPORT THE PIT</p><h2>この場所を、<br/><em>一緒に育てる。</em></h2></div><p>攻略情報はこれまで通り無料。<br/>応援とパートナー掲載が運営を支えます。</p></div>
+        <div className="revenue-quick">
+          <div><p className="kicker">CHOOSE YOUR SUPPORT</p><h3>好きな方法で、運営を支援。</h3></div>
+          <a href={boothItems[0].url} target="_blank" rel="noreferrer"><b>単発で応援</b><span>{`${boothItems[0].name}　¥${boothItems[0].price} ↗`}</span></a>
+          <a href={revenueLinks.support}><b>月額メンバー</b><span>¥390 / 月 →</span></a>
+          <a href={revenueLinks.booth} target="_blank" rel="noreferrer"><b>公式ショップ</b><span>BOOTHでアイテムを見る ↗</span></a>
+        </div>
         <div className="revenue-grid">
           <article className="support-plan">
             <div className="revenue-label">FOR DRIVERS</div><p className="kicker">PIT CREW MEMBERSHIP</p><h3>ピットクルー</h3><div className="price"><strong>¥390</strong><span>/ 月</span></div>
@@ -182,9 +242,11 @@ export default function WanganApp() {
             <a className="revenue-cta" href={revenueLinks.support}>サポーターになる →</a><small>いつでも解除できます</small>
           </article>
           <article className="gear-guide">
-            <div className="revenue-label pr">AFFILIATE</div><p className="kicker">DRIVER&apos;S GEAR</p><h3>プレイを快適にするギア</h3><p>手の滑りを抑えるグローブ、カードケース、イヤホンなど、プレイヤー目線で選んだアイテムを紹介。</p>
-            <div className="gear-items"><span>01　ドライビンググローブ</span><span>02　バナパスポートケース</span><span>03　有線イヤホン</span></div>
-            <a className="revenue-cta secondary-cta" href={revenueLinks.gear} target="_blank" rel="noreferrer sponsored">おすすめギアを見る ↗</a><small>購入により運営者へ紹介料が入る場合があります</small>
+            <div className="revenue-label pr">BOOTH SHOP</div><p className="kicker">WANGAN BASE ITEMS</p><h3>{boothItems[0].name}</h3>
+            <div className="price"><strong>{`¥${boothItems[0].price}`}</strong><span>/ ダウンロード商品</span></div>
+            <p>{boothItems[0].summary}</p>
+            <div className="gear-items">{boothItems[0].contents.map((item, index) => <span key={item}>{String(index + 1).padStart(2, "0")}　{item}</span>)}</div>
+            <a className="revenue-cta secondary-cta" href={boothItems[0].url} target="_blank" rel="noreferrer" aria-label={`${boothItems[0].fullName}をBOOTHで購入する`}>BOOTHで購入する ↗</a><small>外部のBOOTHへ移動します。デジタルデータのため発送はありません。再配布・商用利用は禁止です</small>
           </article>
           <article className="partner-plan">
             <div className="revenue-label sponsor">FOR PARTNERS</div><p className="kicker">SPONSORED PIT</p><h3>店舗・イベント掲載</h3><p>大会、交流会、ゲームセンターの情報を、地域とプレイヤー層に合わせて届けます。</p>
@@ -192,7 +254,7 @@ export default function WanganApp() {
             <a className="revenue-cta secondary-cta" href={revenueLinks.partner}>掲載を相談する →</a><small>内容を確認してから掲載します</small>
           </article>
         </div>
-        <p className="revenue-policy">MIDNIGHT PITは、広告や提携の有無によって攻略評価を変更しません。広告・アフィリエイト・スポンサー投稿には「PR」を明記します。</p>
+        <p className="revenue-policy">MIDNIGHT PITは、広告や提携の有無によって攻略評価を変更しません。広告・スポンサー投稿には「PR」を明記します。BOOTHでの販売収益はサイト運営に使用します。</p>
       </section>
 
       <section className="cta"><p className="kicker">YOUR NEXT RUN STARTS HERE</p><h2>次の1プレイを、<br/><em>今日より速く。</em></h2><p>現在の進捗を記録すると、次にやるべきことが見えてくる。</p><button className="primary" onClick={() => setModal("garage")}>マイガレージを更新 <span>→</span></button></section>
