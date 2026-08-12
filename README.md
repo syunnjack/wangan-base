@@ -8,6 +8,8 @@
 - コース攻略・車種データ
 - 攻略情報、質問、対戦募集のコミュニティ投稿
 - ブラウザ内への進捗・投稿保存
+- 全国の湾岸ミッドナイト マキシマムチューン 6RR PLUS公式設置店への地域別導線
+- BOOTHショップ、運営支援、店舗PR掲載への収益導線
 - スマートフォン対応
 
 ## 開発
@@ -18,6 +20,16 @@ npm run dev
 ```
 
 ビルド確認は `npm run build`、静的解析は `npm run lint` を使用します。
+
+## 収益導線の設定
+
+BOOTHショップを公開したら、デプロイ環境に次の公開環境変数を設定します。
+
+```env
+NEXT_PUBLIC_BOOTH_URL=https://YOUR-SHOP.booth.pm/
+```
+
+未設定時はBOOTHトップへ移動します。月額支援と店舗掲載の問い合わせ先は、それぞれ `NEXT_PUBLIC_SUPPORT_URL` と `NEXT_PUBLIC_PARTNER_URL` で差し替えられます。
 
 ## 権利表記
 
