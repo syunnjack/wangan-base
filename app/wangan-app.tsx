@@ -56,11 +56,12 @@ const arcadeRegions = [...new Set(arcadeAreas.map(({ region }) => region))];
 const officialLocationUrl = (area: string) =>
   `https://wanganmaxi-official.com/wanganmaxi6rrplus/jp/locations/list?area=${area}`;
 
+const boothUrl = process.env.NEXT_PUBLIC_BOOTH_URL || "https://booth.pm/";
+
 const revenueLinks = {
+  booth: boothUrl,
   support: process.env.NEXT_PUBLIC_SUPPORT_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
-  gear: process.env.NEXT_PUBLIC_GEAR_AFFILIATE_URL || "https://www.amazon.co.jp/s?k=%E3%83%89%E3%83%A9%E3%82%A4%E3%83%93%E3%83%B3%E3%82%B0%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96+%E3%82%B2%E3%83%BC%E3%83%A0",
   partner: process.env.NEXT_PUBLIC_PARTNER_URL || "mailto:partner@midnightpit.jp?subject=MIDNIGHT%20PIT%E6%8E%B2%E8%BC%89%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87",
-  tip: process.env.NEXT_PUBLIC_TIP_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E5%8D%98%E7%99%BA%E5%BF%9C%E6%8F%B4",
 };
 
 function targetFor(story: number) {
@@ -219,9 +220,9 @@ export default function WanganApp() {
         <div className="section-title"><div><p className="kicker">SUPPORT THE PIT</p><h2>この場所を、<br/><em>一緒に育てる。</em></h2></div><p>攻略情報はこれまで通り無料。<br/>応援とパートナー掲載が運営を支えます。</p></div>
         <div className="revenue-quick">
           <div><p className="kicker">CHOOSE YOUR SUPPORT</p><h3>好きな方法で、運営を支援。</h3></div>
-          <a href={revenueLinks.tip}><b>単発で応援</b><span>金額・決済方法を相談 →</span></a>
+          <a href={revenueLinks.booth} target="_blank" rel="noreferrer"><b>単発で応援</b><span>BOOTHで支援アイテムを見る ↗</span></a>
           <a href={revenueLinks.support}><b>月額メンバー</b><span>¥390 / 月 →</span></a>
-          <a href={revenueLinks.gear} target="_blank" rel="noreferrer sponsored"><b>ギアを探す</b><span>購入で紹介料が入る場合あり ↗</span></a>
+          <a href={revenueLinks.booth} target="_blank" rel="noreferrer"><b>公式ショップ</b><span>BOOTHでアイテムを見る ↗</span></a>
         </div>
         <div className="revenue-grid">
           <article className="support-plan">
@@ -230,9 +231,9 @@ export default function WanganApp() {
             <a className="revenue-cta" href={revenueLinks.support}>サポーターになる →</a><small>いつでも解除できます</small>
           </article>
           <article className="gear-guide">
-            <div className="revenue-label pr">AFFILIATE</div><p className="kicker">DRIVER&apos;S GEAR</p><h3>プレイを快適にするギア</h3><p>手の滑りを抑えるグローブ、カードケース、イヤホンなど、プレイヤー目線で選んだアイテムを紹介。</p>
-            <div className="gear-items"><span>01　ドライビンググローブ</span><span>02　バナパスポートケース</span><span>03　有線イヤホン</span></div>
-            <a className="revenue-cta secondary-cta" href={revenueLinks.gear} target="_blank" rel="noreferrer sponsored">おすすめギアを見る ↗</a><small>購入により運営者へ紹介料が入る場合があります</small>
+            <div className="revenue-label pr">BOOTH SHOP</div><p className="kicker">WANGAN BASE ITEMS</p><h3>デジタルアイテムで応援</h3><p>壁紙、活動レポート、支援アイテムなどをBOOTHで販売予定。購入は外部のBOOTHショップで安全に手続きできます。</p>
+            <div className="gear-items"><span>01　デジタル壁紙</span><span>02　活動レポート</span><span>03　単発支援アイテム</span></div>
+            <a className="revenue-cta secondary-cta" href={revenueLinks.booth} target="_blank" rel="noreferrer">BOOTHショップを見る ↗</a><small>外部サイトへ移動します。デジタル商品は内容を確認してからご購入ください</small>
           </article>
           <article className="partner-plan">
             <div className="revenue-label sponsor">FOR PARTNERS</div><p className="kicker">SPONSORED PIT</p><h3>店舗・イベント掲載</h3><p>大会、交流会、ゲームセンターの情報を、地域とプレイヤー層に合わせて届けます。</p>
@@ -240,7 +241,7 @@ export default function WanganApp() {
             <a className="revenue-cta secondary-cta" href={revenueLinks.partner}>掲載を相談する →</a><small>内容を確認してから掲載します</small>
           </article>
         </div>
-        <p className="revenue-policy">MIDNIGHT PITは、広告や提携の有無によって攻略評価を変更しません。広告・アフィリエイト・スポンサー投稿には「PR」を明記します。</p>
+        <p className="revenue-policy">MIDNIGHT PITは、広告や提携の有無によって攻略評価を変更しません。広告・スポンサー投稿には「PR」を明記します。BOOTHでの販売収益はサイト運営に使用します。</p>
       </section>
 
       <section className="cta"><p className="kicker">YOUR NEXT RUN STARTS HERE</p><h2>次の1プレイを、<br/><em>今日より速く。</em></h2><p>現在の進捗を記録すると、次にやるべきことが見えてくる。</p><button className="primary" onClick={() => setModal("garage")}>マイガレージを更新 <span>→</span></button></section>
