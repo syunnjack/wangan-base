@@ -60,6 +60,7 @@ const revenueLinks = {
   support: process.env.NEXT_PUBLIC_SUPPORT_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
   gear: process.env.NEXT_PUBLIC_GEAR_AFFILIATE_URL || "https://www.amazon.co.jp/s?k=%E3%83%89%E3%83%A9%E3%82%A4%E3%83%93%E3%83%B3%E3%82%B0%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96+%E3%82%B2%E3%83%BC%E3%83%A0",
   partner: process.env.NEXT_PUBLIC_PARTNER_URL || "mailto:partner@midnightpit.jp?subject=MIDNIGHT%20PIT%E6%8E%B2%E8%BC%89%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87",
+  tip: process.env.NEXT_PUBLIC_TIP_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E5%8D%98%E7%99%BA%E5%BF%9C%E6%8F%B4",
 };
 
 function targetFor(story: number) {
@@ -183,7 +184,11 @@ export default function WanganApp() {
             return <article className="arcade-region" key={region}><header><span>{String(arcadeRegions.indexOf(region) + 1).padStart(2, "0")}</span><h3>{region}</h3></header><div>{areas.map(area => <a href={officialLocationUrl(area.area)} target="_blank" rel="noreferrer" key={area.prefecture}><b>{area.prefecture}</b><span>公式設置店を見る ↗</span></a>)}</div></article>;
           })}
         </div>
-        <p className="arcade-disclaimer">設置情報・台数はリアルタイム反映ではありません。未掲載・撤去済みの場合もあるため、来店前に各店舗へ直接ご確認ください。情報提供元：バンダイナムコエクスペリエンス公式サイト。</p>
+        <aside className="arcade-partner">
+          <div><span className="pr-chip">PR掲載枠</span><p className="kicker">FOR ARCADE OPERATORS</p><h3>大会・交流会を、近くのプレイヤーへ。</h3><p>店舗のイベントや初心者歓迎デーを、地域別ディレクトリとコミュニティで告知できます。PR表記、掲載期間、レポート内容を事前に明示します。</p></div>
+          <div className="partner-offer"><small>店舗・イベント掲載</small><strong>掲載プランを相談</strong><span>地域掲載 / 募集投稿 / 表示レポート</span><a href={revenueLinks.partner}>掲載について問い合わせる →</a></div>
+        </aside>
+        <p className="arcade-disclaimer">設置情報・台数はリアルタイム反映ではありません。未掲載・撤去済みの場合もあるため、来店前に各店舗へ直接ご確認ください。情報提供元：バンダイナムコエクスペリエンス公式サイト。公式一覧の掲載順位は変更せず、有料掲載は「PR」と明示します。</p>
       </section>
 
       <section className="section" id="community">
@@ -212,6 +217,12 @@ export default function WanganApp() {
 
       <section className="section revenue-section" id="support">
         <div className="section-title"><div><p className="kicker">SUPPORT THE PIT</p><h2>この場所を、<br/><em>一緒に育てる。</em></h2></div><p>攻略情報はこれまで通り無料。<br/>応援とパートナー掲載が運営を支えます。</p></div>
+        <div className="revenue-quick">
+          <div><p className="kicker">CHOOSE YOUR SUPPORT</p><h3>好きな方法で、運営を支援。</h3></div>
+          <a href={revenueLinks.tip}><b>単発で応援</b><span>金額・決済方法を相談 →</span></a>
+          <a href={revenueLinks.support}><b>月額メンバー</b><span>¥390 / 月 →</span></a>
+          <a href={revenueLinks.gear} target="_blank" rel="noreferrer sponsored"><b>ギアを探す</b><span>購入で紹介料が入る場合あり ↗</span></a>
+        </div>
         <div className="revenue-grid">
           <article className="support-plan">
             <div className="revenue-label">FOR DRIVERS</div><p className="kicker">PIT CREW MEMBERSHIP</p><h3>ピットクルー</h3><div className="price"><strong>¥390</strong><span>/ 月</span></div>
