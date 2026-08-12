@@ -27,9 +27,12 @@ BOOTHショップを公開したら、デプロイ環境に次の公開環境変
 
 ```env
 NEXT_PUBLIC_BOOTH_URL=https://wan-gan-base.booth.pm/
+NEXT_PUBLIC_BOOTH_ITEM_01_URL=https://wan-gan-base.booth.pm/items/0000000
 ```
 
 未設定時も `https://wan-gan-base.booth.pm/` へ移動します。月額支援と店舗掲載の問い合わせ先は、それぞれ `NEXT_PUBLIC_SUPPORT_URL` と `NEXT_PUBLIC_PARTNER_URL` で差し替えられます。
+
+`NEXT_PUBLIC_BOOTH_ITEM_01_URL` は「WANGAN BASE 運営支援パック 01」の商品ページURLです。BOOTHで商品を登録すると `https://wan-gan-base.booth.pm/items/<商品ID>` が発行されるので、その値を設定してください。未設定の場合はショップトップへ移動します。
 
 ## 権利表記
 

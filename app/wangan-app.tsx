@@ -58,6 +58,17 @@ const officialLocationUrl = (area: string) =>
 
 const boothUrl = process.env.NEXT_PUBLIC_BOOTH_URL || "https://wan-gan-base.booth.pm/";
 
+const boothItems = [
+  {
+    name: "運営支援パック 01",
+    fullName: "WANGAN BASE 運営支援パック 01",
+    price: 500,
+    summary: "深夜の高速道路をモチーフにしたWANGAN BASEオリジナルの壁紙と、活動レポートを収録したダウンロード限定パック。",
+    contents: ["PC用壁紙（16:9 PNG）", "スマートフォン用壁紙（9:16 PNG）", "活動レポート 2026（PDF）", "README（利用案内）"],
+    url: process.env.NEXT_PUBLIC_BOOTH_ITEM_01_URL || boothUrl,
+  },
+];
+
 const revenueLinks = {
   booth: boothUrl,
   support: process.env.NEXT_PUBLIC_SUPPORT_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
@@ -220,7 +231,7 @@ export default function WanganApp() {
         <div className="section-title"><div><p className="kicker">SUPPORT THE PIT</p><h2>この場所を、<br/><em>一緒に育てる。</em></h2></div><p>攻略情報はこれまで通り無料。<br/>応援とパートナー掲載が運営を支えます。</p></div>
         <div className="revenue-quick">
           <div><p className="kicker">CHOOSE YOUR SUPPORT</p><h3>好きな方法で、運営を支援。</h3></div>
-          <a href={revenueLinks.booth} target="_blank" rel="noreferrer"><b>単発で応援</b><span>BOOTHで支援アイテムを見る ↗</span></a>
+          <a href={boothItems[0].url} target="_blank" rel="noreferrer"><b>単発で応援</b><span>{`${boothItems[0].name}　¥${boothItems[0].price} ↗`}</span></a>
           <a href={revenueLinks.support}><b>月額メンバー</b><span>¥390 / 月 →</span></a>
           <a href={revenueLinks.booth} target="_blank" rel="noreferrer"><b>公式ショップ</b><span>BOOTHでアイテムを見る ↗</span></a>
         </div>
@@ -231,9 +242,11 @@ export default function WanganApp() {
             <a className="revenue-cta" href={revenueLinks.support}>サポーターになる →</a><small>いつでも解除できます</small>
           </article>
           <article className="gear-guide">
-            <div className="revenue-label pr">BOOTH SHOP</div><p className="kicker">WANGAN BASE ITEMS</p><h3>デジタルアイテムで応援</h3><p>壁紙、活動レポート、支援アイテムなどをBOOTHで販売予定。購入は外部のBOOTHショップで安全に手続きできます。</p>
-            <div className="gear-items"><span>01　デジタル壁紙</span><span>02　活動レポート</span><span>03　単発支援アイテム</span></div>
-            <a className="revenue-cta secondary-cta" href={revenueLinks.booth} target="_blank" rel="noreferrer">BOOTHショップを見る ↗</a><small>外部サイトへ移動します。デジタル商品は内容を確認してからご購入ください</small>
+            <div className="revenue-label pr">BOOTH SHOP</div><p className="kicker">WANGAN BASE ITEMS</p><h3>{boothItems[0].name}</h3>
+            <div className="price"><strong>{`¥${boothItems[0].price}`}</strong><span>/ ダウンロード商品</span></div>
+            <p>{boothItems[0].summary}</p>
+            <div className="gear-items">{boothItems[0].contents.map((item, index) => <span key={item}>{String(index + 1).padStart(2, "0")}　{item}</span>)}</div>
+            <a className="revenue-cta secondary-cta" href={boothItems[0].url} target="_blank" rel="noreferrer" aria-label={`${boothItems[0].fullName}をBOOTHで購入する`}>BOOTHで購入する ↗</a><small>外部のBOOTHへ移動します。デジタルデータのため発送はありません。再配布・商用利用は禁止です</small>
           </article>
           <article className="partner-plan">
             <div className="revenue-label sponsor">FOR PARTNERS</div><p className="kicker">SPONSORED PIT</p><h3>店舗・イベント掲載</h3><p>大会、交流会、ゲームセンターの情報を、地域とプレイヤー層に合わせて届けます。</p>
