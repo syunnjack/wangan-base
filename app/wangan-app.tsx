@@ -39,6 +39,23 @@ const contributors = [
   { rank: 3, name: "NIGHT EVO", score: 920, badge: "募集マスター" },
 ];
 
+
+type ArcadeArea = { region: string; prefecture: string; area: string };
+
+const arcadeAreas: ArcadeArea[] = [
+  ["北海道・東北","北海道","JP-01"],["北海道・東北","青森県","JP-02"],["北海道・東北","岩手県","JP-03"],["北海道・東北","宮城県","JP-04"],["北海道・東北","秋田県","JP-05"],["北海道・東北","山形県","JP-06"],["北海道・東北","福島県","JP-07"],
+  ["関東","茨城県","JP-08"],["関東","栃木県","JP-09"],["関東","群馬県","JP-10"],["関東","埼玉県","JP-11"],["関東","千葉県","JP-12"],["関東","東京都（23区）","JP-13&sw=1"],["関東","東京都（23区外）","JP-13&sw=2"],["関東","神奈川県","JP-14"],
+  ["信越・北陸","新潟県","JP-15"],["信越・北陸","富山県","JP-16"],["信越・北陸","石川県","JP-17"],["信越・北陸","福井県","JP-18"],["信越・北陸","山梨県","JP-19"],["信越・北陸","長野県","JP-20"],
+  ["東海","岐阜県","JP-21"],["東海","静岡県","JP-22"],["東海","愛知県","JP-23"],["東海","三重県","JP-24"],
+  ["関西","滋賀県","JP-25"],["関西","京都府","JP-26"],["関西","大阪府","JP-27"],["関西","兵庫県","JP-28"],["関西","奈良県","JP-29"],["関西","和歌山県","JP-30"],
+  ["中国・四国","鳥取県","JP-31"],["中国・四国","島根県","JP-32"],["中国・四国","岡山県","JP-33"],["中国・四国","広島県","JP-34"],["中国・四国","山口県","JP-35"],["中国・四国","徳島県","JP-36"],["中国・四国","香川県","JP-37"],["中国・四国","愛媛県","JP-38"],["中国・四国","高知県","JP-39"],
+  ["九州・沖縄","福岡県","JP-40"],["九州・沖縄","佐賀県","JP-41"],["九州・沖縄","長崎県","JP-42"],["九州・沖縄","熊本県","JP-43"],["九州・沖縄","大分県","JP-44"],["九州・沖縄","宮崎県","JP-45"],["九州・沖縄","鹿児島県","JP-46"],["九州・沖縄","沖縄県","JP-47"],
+].map(([region, prefecture, area]) => ({ region, prefecture, area }));
+
+const arcadeRegions = [...new Set(arcadeAreas.map(({ region }) => region))];
+const officialLocationUrl = (area: string) =>
+  `https://wanganmaxi-official.com/wanganmaxi6rrplus/jp/locations/list?area=${area}`;
+
 const revenueLinks = {
   support: process.env.NEXT_PUBLIC_SUPPORT_URL || "mailto:support@midnightpit.jp?subject=MIDNIGHT%20PIT%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
   gear: process.env.NEXT_PUBLIC_GEAR_AFFILIATE_URL || "https://www.amazon.co.jp/s?k=%E3%83%89%E3%83%A9%E3%82%A4%E3%83%93%E3%83%B3%E3%82%B0%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96+%E3%82%B2%E3%83%BC%E3%83%A0",
@@ -61,6 +78,7 @@ export default function WanganApp() {
   const [modal, setModal] = useState<"garage" | "post" | null>(null);
   const [postSeed, setPostSeed] = useState("");
   const [vote, setVote] = useState("");
+  const [arcadeQuery, setArcadeQuery] = useState("");
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -76,6 +94,7 @@ export default function WanganApp() {
 
   const target = targetFor(garage.story);
   const progress = Math.min(100, Math.round((garage.story / target.next) * 100));
+  const filteredArcadeAreas = useMemo(() => arcadeAreas.filter(({ region, prefecture }) => `${region} ${prefecture}`.toLowerCase().includes(arcadeQuery.toLowerCase())), [arcadeQuery]);
   const filteredPosts = useMemo(() => posts.filter((post) => {
     const categoryMatch = postFilter === "すべて" || (postFilter === "未回答" ? post.category === "質問・相談" && post.replies === 0 : post.category === postFilter);
     const text = `${post.title} ${post.body} ${post.tags.join(" ")}`.toLowerCase();
@@ -114,7 +133,7 @@ export default function WanganApp() {
           <span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b><small>PLAYER COMMUNITY</small></span>
         </button>
         <nav aria-label="メインメニュー">
-          {[["ホーム","top"],["攻略","guides"],["車種","cars"],["コミュニティ","community"]].map(([label,id]) => <button className={active === label ? "active" : ""} onClick={() => jump(label,id)} key={label}>{label}</button>)}
+          {[["ホーム","top"],["攻略","guides"],["車種","cars"],["店舗","arcades"],["コミュニティ","community"]].map(([label,id]) => <button className={active === label ? "active" : ""} onClick={() => jump(label,id)} key={label}>{label}</button>)}
         </nav>
         <button className="garage-button" onClick={() => setModal("garage")}><span>◉</span> マイガレージ</button>
       </header>
@@ -147,6 +166,24 @@ export default function WanganApp() {
       <section className="section dark-panel" id="cars">
         <div className="section-title"><div><p className="kicker">MACHINE DATABASE</p><h2>相棒を、<em>見つける。</em></h2></div><button className="outline-button" onClick={() => setQuery("")}>全車種を見る →</button></div>
         <div className="car-list">{cars.map((car) => <article key={car[0]}><span className="car-no">{car[0]}</span><div className="car-icon">◇</div><div className="car-name"><small>{car[1]}</small><h3>{car[2]}</h3><span>{car[3]}</span></div><div className="car-stat"><small>特徴</small><b>{car[4]}</b></div><div className="car-rate"><small>初心者おすすめ</small><b>{car[5]}</b></div><button aria-label={`${car[2]}を見る`}>↗</button></article>)}</div>
+      </section>
+
+
+      <section className="section arcade-section" id="arcades">
+        <div className="section-title">
+          <div><p className="kicker">ARCADE DIRECTORY</p><h2>全国の設置店を、<br/><em>探す。</em></h2></div>
+          <p>湾岸ミッドナイト マキシマムチューン 6RR PLUS<br/>公式設置店舗情報（2026年8月12日確認）</p>
+        </div>
+        <div className="arcade-notice"><span>LIVE SOURCE</span><p>全国47都道府県・48エリアを網羅。店舗名・住所・設置台数は、各エリアの公式最新一覧で確認できます。</p></div>
+        <label className="arcade-search">⌕<input value={arcadeQuery} onChange={event => setArcadeQuery(event.target.value)} placeholder="都道府県・地方名で検索" /></label>
+        <div className="arcade-regions">
+          {arcadeRegions.map(region => {
+            const areas = filteredArcadeAreas.filter(area => area.region === region);
+            if (!areas.length) return null;
+            return <article className="arcade-region" key={region}><header><span>{String(arcadeRegions.indexOf(region) + 1).padStart(2, "0")}</span><h3>{region}</h3></header><div>{areas.map(area => <a href={officialLocationUrl(area.area)} target="_blank" rel="noreferrer" key={area.prefecture}><b>{area.prefecture}</b><span>公式設置店を見る ↗</span></a>)}</div></article>;
+          })}
+        </div>
+        <p className="arcade-disclaimer">設置情報・台数はリアルタイム反映ではありません。未掲載・撤去済みの場合もあるため、来店前に各店舗へ直接ご確認ください。情報提供元：バンダイナムコエクスペリエンス公式サイト。</p>
       </section>
 
       <section className="section" id="community">
