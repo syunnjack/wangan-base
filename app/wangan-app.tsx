@@ -56,7 +56,7 @@ const arcadeRegions = [...new Set(arcadeAreas.map(({ region }) => region))];
 const officialLocationUrl = (area: string) =>
   `https://wanganmaxi-official.com/wanganmaxi6rrplus/jp/locations/list?area=${area}`;
 
-const boothUrl = process.env.NEXT_PUBLIC_BOOTH_URL || "https://wangan-base.booth.pm/";
+const boothUrl = process.env.NEXT_PUBLIC_BOOTH_URL || "https://wan-gan-base.booth.pm/";
 
 const revenueLinks = {
   booth: boothUrl,
