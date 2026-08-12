@@ -26,10 +26,10 @@ npm run dev
 BOOTHショップを公開したら、デプロイ環境に次の公開環境変数を設定します。
 
 ```env
-NEXT_PUBLIC_BOOTH_URL=https://YOUR-SHOP.booth.pm/
+NEXT_PUBLIC_BOOTH_URL=https://wangan-base.booth.pm/
 ```
 
-未設定時はBOOTHトップへ移動します。月額支援と店舗掲載の問い合わせ先は、それぞれ `NEXT_PUBLIC_SUPPORT_URL` と `NEXT_PUBLIC_PARTNER_URL` で差し替えられます。
+未設定時も `https://wangan-base.booth.pm/` へ移動します。月額支援と店舗掲載の問い合わせ先は、それぞれ `NEXT_PUBLIC_SUPPORT_URL` と `NEXT_PUBLIC_PARTNER_URL` で差し替えられます。
 
 ## 権利表記
 
