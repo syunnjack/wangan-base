@@ -5,7 +5,7 @@ import "./revenue.css";
 
 export const metadata: Metadata = {
   title: { default: "WANGAN BASE", template: "%s｜WANGAN BASE" },
-  description: "走るほど、つながる。湾岸プレイヤーの攻略基地。",
+  description: "湾岸ミッドナイト マキシマムチューンのプレイ記録を、運営者ひとりが書いていく非公式サイト。",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 
