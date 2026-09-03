@@ -11,6 +11,19 @@ type Garage = { rank: string; car: string; story: number; course: string };
 
 const emptyGarage: Garage = { rank: "", car: "", story: 0, course: "C1" };
 
+// 運営者の記録。新しい順に積み、上書きしない。
+// 過去のぶんが消えると、進んだのかどうかが後から分からなくなる。
+// ここに書くのは実際に確認できた数字だけ。以前あった架空の進捗とは別物。
+const statusLog = [
+  {
+    updated: "2026年9月3日",
+    title: "連装キング",
+    rank: "C5",
+    power: "720馬力",
+    distance: "1,023km",
+  },
+];
+
 // 収録コースと車種。名称は実在するもの。備考は運営者の私見であることを明示する。
 const courses = [
   { name: "C1", sub: "内回り / 外回り", note: "最初に走り込んでいるコース", color: "cyan" },
@@ -96,7 +109,9 @@ export default function WanganApp() {
 
       <section className="section" id="record">
         <div className="section-title"><div><p className="kicker">CURRENT STATUS</p><h2>いまの状況</h2></div><p>運営者本人の進捗です。<br/>更新があったときだけ書き足します。</p></div>
-        <div className="arcade-notice"><span>RECORD</span><p>湾岸ミッドナイト マキシマムチューン 6RR PLUS は、まだ記録として書けるところまで進んでいません。ストーリーの進捗、使用車種、走ったコースが決まった時点でここに書きます。現時点で出せる数字はありません。</p></div>
+        <div className="arcade-notice"><span>RECORD</span><p>湾岸ミッドナイト マキシマムチューン 6RR PLUS の、{statusLog[0].updated}時点の記録です。称号は{statusLog[0].title}、ドライバーレベルは{statusLog[0].rank}、{statusLog[0].power}、累計走行距離は{statusLog[0].distance}。</p></div>
+        <div className="course-grid">{statusLog.map((entry) => <article className="course-card cyan" key={entry.updated}><div className="course-number">{entry.updated}</div><p>TITLE</p><h3>{entry.title}</h3><span>ドライバーレベル {entry.rank}</span><dl><div><dt>馬力</dt><dd>{entry.power}</dd></div><div><dt>累計走行距離</dt><dd>{entry.distance}</dd></div></dl></article>)}</div>
+        <p className="arcade-disclaimer">使用車種と走ったコースは、まだ記録として残していません。書けるようになった時点でここに追記します。</p>
         <p className="arcade-disclaimer">以前このページには、架空のドライバー名、ストーリー進捗、オンライン人数、投稿、投票数、貢献ランキングを初期表示として置いていました。実在しない利用者を装うことになるため、2026年9月2日にすべて削除しました。</p>
       </section>
 

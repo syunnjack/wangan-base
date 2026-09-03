@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import WanganApp from "./wangan-app";
 
 const title = "WANGAN BASE｜湾岸ミッドナイト マキシマムチューンのプレイ記録";
-const description = "湾岸ミッドナイト マキシマムチューン 6RR PLUS を遊んだ記録を、運営者ひとりが書いていく非公式サイト。全国の公式設置店一覧へのリンクも置いています。";
+const description = "湾岸ミッドナイト マキシマムチューン 6RR PLUS を遊んだ記録を、運営者ひとりが書いていく非公式サイト。いまは称号「連装キング」、ドライバーレベルC5、720馬力、累計走行距離1,023km。全国の公式設置店一覧へのリンクも置いています。";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://midnightpit.jp"),
