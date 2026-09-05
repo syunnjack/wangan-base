@@ -25,6 +25,21 @@ const statusLog = [
 ];
 
 // 収録コースと車種。名称は実在するもの。備考は運営者の私見であることを明示する。
+// 走った日の記録。称号や距離のような数字ではなく、その日にあったこと。
+// statusLog（称号・馬力・距離）とは別に持つ。数字が動かない日でも
+// 書けることがあるため。新しい順に積み、上書きしない。
+const playLog = [
+  {
+    updated: "2026年9月5日",
+    headline: "全国分身という遊び方を知った",
+    body: [
+      "全国分身という遊び方を知った。きょうは4勝5敗。",
+      "対戦相手のレベルも選べるので、しばらく続けるつもり。",
+      "ゲームセンターに行くたびに、スクラッチとビンゴをやっている。",
+    ],
+  },
+];
+
 const courses = [
   { name: "C1", sub: "内回り / 外回り", note: "最初に走り込んでいるコース", color: "cyan" },
   { name: "湾岸線", sub: "東行き / 西行き", note: "高速域の車線変更が課題", color: "amber" },
@@ -92,7 +107,7 @@ export default function WanganApp() {
           <span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b><small>PLAY RECORD</small></span>
         </button>
         <nav aria-label="メインメニュー">
-          {[["ホーム","top"],["記録","record"],["コース","guides"],["車種","cars"],["店舗","arcades"]].map(([label,id]) => <button className={active === label ? "active" : ""} onClick={() => jump(label,id)} key={label}>{label}</button>)}
+          {[["ホーム","top"],["記録","record"],["日記","log"],["コース","guides"],["車種","cars"],["店舗","arcades"]].map(([label,id]) => <button className={active === label ? "active" : ""} onClick={() => jump(label,id)} key={label}>{label}</button>)}
         </nav>
         <button className="garage-button" onClick={() => setModal("garage")}><span>◉</span> 自分のメモ</button>
       </header>
@@ -113,6 +128,11 @@ export default function WanganApp() {
         <div className="course-grid">{statusLog.map((entry) => <article className="course-card cyan" key={entry.updated}><div className="course-number">{entry.updated}</div><p>TITLE</p><h3>{entry.title}</h3><span>ドライバーレベル {entry.rank}</span><dl><div><dt>馬力</dt><dd>{entry.power}</dd></div><div><dt>累計走行距離</dt><dd>{entry.distance}</dd></div></dl></article>)}</div>
         <p className="arcade-disclaimer">使用車種と走ったコースは、まだ記録として残していません。書けるようになった時点でここに追記します。</p>
         <p className="arcade-disclaimer">以前このページには、架空のドライバー名、ストーリー進捗、オンライン人数、投稿、投票数、貢献ランキングを初期表示として置いていました。実在しない利用者を装うことになるため、2026年9月2日にすべて削除しました。</p>
+      </section>
+
+      <section className="section" id="log">
+        <div className="section-title"><div><p className="kicker">PLAY LOG</p><h2>走った日の記録</h2></div><p>その日にあったことを書いています。<br/>称号や距離は「いまの状況」にあります。</p></div>
+        <div className="play-log">{playLog.map((entry) => <article key={entry.updated}><span className="play-log-date">{entry.updated}</span><h3>{entry.headline}</h3>{entry.body.map((line, i) => <p key={i}>{line}</p>)}</article>)}</div>
       </section>
 
       <section className="section" id="guides">
@@ -142,7 +162,7 @@ export default function WanganApp() {
         <p className="arcade-disclaimer">リンク先は公式サイトです。未掲載・撤去済みの場合もあるため、来店前に各店舗へ直接ご確認ください。情報提供元：バンダイナムコエクスペリエンス公式サイト。</p>
       </section>
 
-      <footer className="footer"><div className="brand"><span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b></span></div><p>運営者ひとりのプレイ記録サイトです。掲示板や会員制度はありません。<br/>ファンによる非公式サイトで、ゲームメーカーおよび権利者各社とは関係ありません。ゲーム名、車名、商標等は各権利者に帰属します。</p><div><a href="#record">いまの状況</a><a href="#guides">コース</a><a href="#arcades">設置店</a><a href="#top">サイトについて</a></div></footer>
+      <footer className="footer"><div className="brand"><span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b></span></div><p>運営者ひとりのプレイ記録サイトです。掲示板や会員制度はありません。<br/>ファンによる非公式サイトで、ゲームメーカーおよび権利者各社とは関係ありません。ゲーム名、車名、商標等は各権利者に帰属します。</p><div><a href="#record">いまの状況</a><a href="#log">走った日の記録</a><a href="#guides">コース</a><a href="#arcades">設置店</a><a href="#top">サイトについて</a></div></footer>
 
       <nav className="mobile-nav">{[["⌂","ホーム","top"],["◎","記録","record"],["⌁","コース","guides"],["♢","メモ","garage"]].map(([icon,label,id]) => <button onClick={() => id === "garage" ? setModal("garage") : jump(label,id)} key={label}><b>{icon}</b>{label}</button>)}</nav>
 
