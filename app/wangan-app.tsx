@@ -11,16 +11,51 @@ type Garage = { rank: string; car: string; story: number; course: string };
 
 const emptyGarage: Garage = { rank: "", car: "", story: 0, course: "C1" };
 
-// 運営者の記録。新しい順に積み、上書きしない。
-// 過去のぶんが消えると、進んだのかどうかが後から分からなくなる。
-// ここに書くのは実際に確認できた数字だけ。以前あった架空の進捗とは別物。
-const statusLog = [
+// 運営者が登録している車。ランクとチューニングは車両データごとに別で持つため、
+// どの記録がどの車のものかを必ず添える。1枚のカードの中で別々の段階が同時に成立する。
+// 未確認のものは空欄にして「未確認」と出す。埋めたくなったら先に筐体で確かめること。
+const ownerGarage = [
   {
-    updated: "2026年9月3日",
+    slot: "01",
+    maker: "NISSAN",
+    name: "SKYLINE GT-R",
+    code: "BNR32",
+    obtained: "最初に登録した1台",
+    playing: "ストーリーモード",
     title: "連装キング",
-    rank: "C5",
+    rank: "C5級",
     power: "720馬力",
     distance: "1,023km",
+    updated: "2026年9月3日",
+    note: "",
+  },
+  {
+    slot: "02",
+    maker: "MITSUBISHI",
+    name: "LANCER Evolution III GSR",
+    code: "CE9A",
+    obtained: "廃車カードで作成",
+    playing: "ビンゴと全国分身",
+    title: "",
+    rank: "C6級",
+    power: "600馬力/B",
+    distance: "",
+    updated: "2026年9月11日",
+    note: "名古屋を走っている。全国分身の撃破トロフィーは140個。",
+  },
+  {
+    slot: "03",
+    maker: "SUBARU",
+    name: "R2",
+    code: "RC2",
+    obtained: "ターミナルスクラッチ",
+    playing: "未着手",
+    title: "",
+    rank: "",
+    power: "",
+    distance: "",
+    updated: "",
+    note: "車種は運営者の記憶によるもので、筐体でまだ確かめていない。緑の軽自動車という以外は未確認。",
   },
 ];
 
@@ -29,6 +64,15 @@ const statusLog = [
 // statusLog（称号・馬力・距離）とは別に持つ。数字が動かない日でも
 // 書けることがあるため。新しい順に積み、上書きしない。
 const playLog = [
+  {
+    updated: "2026年9月11日",
+    headline: "エボ3で全国分身を続けている",
+    body: [
+      "エボ3の撃破トロフィーが110個から140個になった。",
+      "1プレイあたりの撃破数は平均1.5台ほどで、目の前の3番手は抜けても、ポールの車まで届いていない。",
+      "走っているのは名古屋。R32とは別の車なので、称号も馬力も別に積み上がっていく。",
+    ],
+  },
   {
     updated: "2026年9月5日",
     headline: "全国分身という遊び方を知った",
@@ -123,10 +167,21 @@ export default function WanganApp() {
       </section>
 
       <section className="section" id="record">
-        <div className="section-title"><div><p className="kicker">CURRENT STATUS</p><h2>いまの状況</h2></div><p>運営者本人の進捗です。<br/>更新があったときだけ書き足します。</p></div>
-        <div className="arcade-notice"><span>RECORD</span><p>湾岸ミッドナイト マキシマムチューン 6RR PLUS の、{statusLog[0].updated}時点の記録です。称号は{statusLog[0].title}、ドライバーレベルは{statusLog[0].rank}、{statusLog[0].power}、累計走行距離は{statusLog[0].distance}。</p></div>
-        <div className="course-grid">{statusLog.map((entry) => <article className="course-card cyan" key={entry.updated}><div className="course-number">{entry.updated}</div><p>TITLE</p><h3>{entry.title}</h3><span>ドライバーレベル {entry.rank}</span><dl><div><dt>馬力</dt><dd>{entry.power}</dd></div><div><dt>累計走行距離</dt><dd>{entry.distance}</dd></div></dl></article>)}</div>
-        <p className="arcade-disclaimer">使用車種と走ったコースは、まだ記録として残していません。書けるようになった時点でここに追記します。</p>
+        <div className="section-title"><div><p className="kicker">GARAGE</p><h2>いまの状況</h2></div><p>運営者本人の進捗です。<br/>車ごとに分けて書いています。</p></div>
+        <div className="arcade-notice"><span>RECORD</span><p>同じカードに3台を登録して遊んでいます。ランクとチューニングは車両データごとに別で持つため、下の記録も車ごとに分けています。1台の数字を全体の進捗と読み違えないようにするためです。</p></div>
+        <div className="garage-grid">{ownerGarage.map((car) => <article className="garage-card" key={car.slot}>
+          <header><span className="garage-slot">{car.slot}</span><div><small>{car.maker}</small><h3>{car.name}</h3><em>{car.code}</em></div></header>
+          <dl>
+            <div><dt>入手</dt><dd>{car.obtained}</dd></div>
+            <div><dt>遊び方</dt><dd>{car.playing}</dd></div>
+            <div><dt>称号</dt><dd>{car.title || "未記録"}</dd></div>
+            <div><dt>ランク</dt><dd>{car.rank || "未確認"}</dd></div>
+            <div><dt>馬力</dt><dd>{car.power || "未確認"}</dd></div>
+            <div><dt>累計走行距離</dt><dd>{car.distance || "未記録"}</dd></div>
+          </dl>
+          {car.note && <p className="garage-note">{car.note}</p>}
+          <footer>{car.updated ? `${car.updated}時点` : "まだ走っていない"}</footer>
+        </article>)}</div>
         <p className="arcade-disclaimer">以前このページには、架空のドライバー名、ストーリー進捗、オンライン人数、投稿、投票数、貢献ランキングを初期表示として置いていました。実在しない利用者を装うことになるため、2026年9月2日にすべて削除しました。</p>
       </section>
 

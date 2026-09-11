@@ -13,3 +13,17 @@
 .play-log h3{margin:0 0 12px;font-size:20px;font-weight:600;line-height:1.5}
 .play-log p{margin:0 0 8px;color:var(--muted);line-height:2}
 .play-log p:last-child{margin-bottom:0}
+
+.garage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.garage-card{border:1px solid var(--line);background:var(--panel);padding:20px}
+.garage-card header{display:flex;gap:14px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.garage-slot{flex:none;color:var(--cyan);font:11px/1 monospace;letter-spacing:.1em;border:1px solid var(--cyan);padding:6px 8px}
+.garage-card header small{display:block;color:var(--muted);font-size:9px;letter-spacing:.14em}
+.garage-card header h3{margin:2px 0 0;font-size:16px;line-height:1.4}
+.garage-card header em{color:var(--muted);font-size:10px;font-style:normal;letter-spacing:.08em}
+.garage-card dl{margin:14px 0 0;display:grid;gap:8px}
+.garage-card dl>div{display:flex;justify-content:space-between;gap:12px;font-size:12px}
+.garage-card dt{color:var(--muted)}
+.garage-card dd{margin:0;text-align:right}
+.garage-note{margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line);color:var(--muted);font-size:11px;line-height:1.8}
+.garage-card>footer{margin-top:14px;color:var(--muted);font:9px monospace;letter-spacing:.1em}

@@ -33,9 +33,15 @@ test("最新の記録が出ている", async () => {
   const html = await (await render()).text();
   // 過去の記録は下に残るので、古い文字列で検証すると更新されていなくても
   // 通ってしまう。いちばん新しいものを見る。記録を足したらここも直す。
+  assert.match(html, /エボ3で全国分身を続けている/);
+  assert.match(html, /2026年9月11日/);
+  // 車ごとに分けて出していること。1台の数字を全体の進捗と読み違えないため。
+  assert.match(html, /BNR32/);
+  assert.match(html, /CE9A/);
+  assert.match(html, /RC2/);
   assert.match(html, /連装キング/);
-  assert.match(html, /全国分身という遊び方を知った/);
-  assert.match(html, /2026年9月5日/);
+  // 確かめていないものは未確認と出す。埋めたら落ちる。
+  assert.match(html, /未確認/);
 });
 
 // 架空の利用者データを二度と載せないための番人。
