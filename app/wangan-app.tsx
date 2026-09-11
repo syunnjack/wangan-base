@@ -162,7 +162,7 @@ export default function WanganApp() {
         <p className="arcade-disclaimer">リンク先は公式サイトです。未掲載・撤去済みの場合もあるため、来店前に各店舗へ直接ご確認ください。情報提供元：バンダイナムコエクスペリエンス公式サイト。</p>
       </section>
 
-      <footer className="footer"><div className="brand"><span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b></span></div><p>運営者ひとりのプレイ記録サイトです。掲示板や会員制度はありません。<br/>ファンによる非公式サイトで、ゲームメーカーおよび権利者各社とは関係ありません。ゲーム名、車名、商標等は各権利者に帰属します。</p><div><a href="#record">いまの状況</a><a href="#log">走った日の記録</a><a href="#guides">コース</a><a href="#arcades">設置店</a><a href="#top">サイトについて</a></div></footer>
+      <footer className="footer"><div className="brand"><span className="brand-mark"><i /></span><span>WANGAN <b>BASE</b></span></div><p>運営者ひとりのプレイ記録サイトです。掲示板や会員制度はありません。<br/>ファンによる非公式サイトで、ゲームメーカーおよび権利者各社とは関係ありません。ゲーム名、車名、商標等は各権利者に帰属します。</p><div><a href="#record">いまの状況</a><a href="#log">走った日の記録</a><a href="#guides">コース</a><a href="#arcades">設置店</a><a href="/ic-card">ICカード</a><a href="/disclosure">広告・PR方針</a><a href="#top">サイトについて</a></div></footer>
 
       <nav className="mobile-nav">{[["⌂","ホーム","top"],["◎","記録","record"],["⌁","コース","guides"],["♢","メモ","garage"]].map(([icon,label,id]) => <button onClick={() => id === "garage" ? setModal("garage") : jump(label,id)} key={label}><b>{icon}</b>{label}</button>)}</nav>
 
