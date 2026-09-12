@@ -33,8 +33,8 @@ test("最新の記録が出ている", async () => {
   const html = await (await render()).text();
   // 過去の記録は下に残るので、古い文字列で検証すると更新されていなくても
   // 通ってしまう。いちばん新しいものを見る。記録を足したらここも直す。
-  assert.match(html, /エボ3で全国分身を続けている/);
-  assert.match(html, /2026年9月11日/);
+  assert.match(html, /C4級に上がり、ビンゴが3列そろった/);
+  assert.match(html, /2026年9月12日/);
   // 車ごとに分けて出していること。1台の数字を全体の進捗と読み違えないため。
   assert.match(html, /BNR32/);
   assert.match(html, /CE9A/);
