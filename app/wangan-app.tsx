@@ -57,6 +57,20 @@ const ownerGarage = [
     updated: "2026年9月12日",
     note: "車種を確認した。湾岸マキシに収録されている軽自動車は、このR2とS660 αの2台だけ。まだ走らせていないので、ランクと馬力は書けない。",
   },
+  {
+    slot: "04",
+    maker: "NISSAN",
+    name: "SKYLINE GT-R V-spec II",
+    code: "BNR34",
+    obtained: "廃車カードで作成（2枚目）",
+    playing: "全国分身",
+    title: "",
+    rank: "",
+    power: "600馬力/B",
+    distance: "",
+    updated: "2026年9月18日",
+    note: "廃車カードで登録した車は、基本チューニング終了済みのパワー10・ハンドリング10、つまり600馬力/Bから始まる。エボ3とまったく同じ条件なので、全国分身で当たる相手のレベルも同じになる。そのうえで、いまのところ勝率はエボ3より良い。ランクはまだ確かめていない。",
+  },
 ];
 
 // 収録コースと車種。名称は実在するもの。備考は運営者の私見であることを明示する。
@@ -64,6 +78,15 @@ const ownerGarage = [
 // statusLog（称号・馬力・距離）とは別に持つ。数字が動かない日でも
 // 書けることがあるため。新しい順に積み、上書きしない。
 const playLog = [
+  {
+    updated: "2026年9月18日",
+    headline: "廃車カードでR34を作ったら、エボ3より勝てる",
+    body: [
+      "廃車カードをもう1枚手に入れて、R34のV-spec IIを登録した。これで4台目になる。",
+      "廃車カードで作った車は600馬力/Bから始まるので、エボ3と条件がまったく同じになる。当たる分身のレベルも同じ。その状態で走ってみたら、全国分身の勝率はR34のほうが良かった。",
+      "車の性能以外に違いがないので、名古屋のように直線が長いコースでは、最高速が伸びる車のほうが有利ということだと思う。エボ3は加速とコーナーの車で、最高速は伸びない。",
+    ],
+  },
   {
     updated: "2026年9月14日",
     headline: "トロフィーが207本になった",
@@ -185,7 +208,7 @@ export default function WanganApp() {
 
       <section className="section" id="record">
         <div className="section-title"><div><p className="kicker">GARAGE</p><h2>いまの状況</h2></div><p>運営者本人の進捗です。<br/>車ごとに分けて書いています。</p></div>
-        <div className="arcade-notice"><span>RECORD</span><p>同じカードに3台を登録して遊んでいます。ランクとチューニングは車両データごとに別で持つため、下の記録も車ごとに分けています。1台の数字を全体の進捗と読み違えないようにするためです。</p></div>
+        <div className="arcade-notice"><span>RECORD</span><p>同じカードに4台を登録して遊んでいます。ランクとチューニングは車両データごとに別で持つため、下の記録も車ごとに分けています。1台の数字を全体の進捗と読み違えないようにするためです。</p></div>
         <div className="garage-grid">{ownerGarage.map((car) => <article className="garage-card" key={car.slot}>
           <header><span className="garage-slot">{car.slot}</span><div><small>{car.maker}</small><h3>{car.name}</h3><em>{car.code}</em></div></header>
           <dl>
